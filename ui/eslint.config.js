@@ -49,44 +49,41 @@ export default [
       'no-void': 'off',
       // TODO fix these in follow ups
       '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/no-unnecessary-condition': 'off',
+      '@typescript-eslint/no-unsafe-type-assertion': 'off',
+      'eqeqeq': 'off',
+      'no-param-reassign': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/prefer-regexp-exec': 'off',
+      '@typescript-eslint/use-unknown-in-catch-callback-variable': 'off',
+      'no-console': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-useless-default-assignment': 'off',
+      'radix': 'off',
+      '@typescript-eslint/no-unnecessary-template-expression': 'off',
+      '@typescript-eslint/no-unnecessary-type-conversion': 'off',
+      '@typescript-eslint/no-unnecessary-type-assertion': 'off',
+      '@typescript-eslint/switch-exhaustiveness-check': 'off',
+      '@typescript-eslint/strict-void-return': 'off',
+      'no-useless-assignment': 'off',
 
-      // eslint-config-love@158 is far stricter than the v43 we came from. These
-      // are disabled only to land the ESLint 10 upgrade with a clean run; the
-      // counts are findings at migration time. Re-enable one at a time, most
-      // valuable first (see the tracking issue).
-      '@typescript-eslint/no-magic-numbers': 'off', // 668
-      '@typescript-eslint/no-unnecessary-condition': 'off', // 52
-      '@typescript-eslint/no-import-type-side-effects': 'off', // 46
-      '@typescript-eslint/prefer-destructuring': 'off', // 46
-      'require-unicode-regexp': 'off', // 24
-      'no-negated-condition': 'off', // 24
-      'arrow-body-style': 'off', // 23
-      'prefer-named-capture-group': 'off', // 22
-      'no-plusplus': 'off', // 21
-      '@typescript-eslint/no-unsafe-type-assertion': 'off', // 20
-      'eqeqeq': 'off', // 18
-      'complexity': 'off', // 13
-      'no-param-reassign': 'off', // 11
-      '@typescript-eslint/no-unsafe-assignment': 'off', // 8
-      '@typescript-eslint/prefer-regexp-exec': 'off', // 8
-      '@typescript-eslint/no-inferrable-types': 'off', // 6
-      '@typescript-eslint/use-unknown-in-catch-callback-variable': 'off', // 5
-      'no-console': 'off', // 5
-      '@typescript-eslint/no-explicit-any': 'off', // 4
-      '@typescript-eslint/max-params': 'off', // 4
-      '@typescript-eslint/init-declarations': 'off', // 3
-      '@typescript-eslint/no-useless-default-assignment': 'off', // 3
-      'radix': 'off', // 3
-      'no-useless-assignment': 'off', // 2
-      '@typescript-eslint/no-unnecessary-type-conversion': 'off', // 2
-      '@typescript-eslint/no-unnecessary-template-expression': 'off', // 2
-      'prefer-template': 'off', // 2
-      '@typescript-eslint/switch-exhaustiveness-check': 'off', // 2
-      '@typescript-eslint/no-unnecessary-type-assertion': 'off', // 1
-      '@typescript-eslint/no-unsafe-member-access': 'off', // 1
-      '@typescript-eslint/strict-void-return': 'off', // 1
-      'max-lines': 'off', // 1
-      'max-nested-callbacks': 'off', // 1
+      // Style and size rules from eslint-config-love 158 that this codebase does not follow.
+      '@typescript-eslint/no-magic-numbers': 'off',
+      '@typescript-eslint/prefer-destructuring': 'off',
+      'no-negated-condition': 'off',
+      'require-unicode-regexp': 'off',
+      'arrow-body-style': 'off',
+      'prefer-named-capture-group': 'off',
+      'no-plusplus': 'off',
+      'complexity': 'off',
+      '@typescript-eslint/max-params': 'off',
+      'max-lines': 'off',
+      'max-nested-callbacks': 'off',
+      '@typescript-eslint/init-declarations': 'off',
+      'prefer-template': 'off',
+      '@typescript-eslint/no-inferrable-types': 'off',
+      '@typescript-eslint/no-import-type-side-effects': 'off',
     },
   },
   // Must stay last so it can switch off formatting rules from the configs above.
