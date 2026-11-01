@@ -828,12 +828,12 @@ const List = () => {
 }
 
 interface NameCellProps {
-  cell: Cell<row, any>
+  cell: Cell<row, unknown>
   onFilter: (lset: Labels) => void
 }
 
 const NameCell = ({cell, onFilter}: NameCellProps): React.JSX.Element => {
-  const v: {lset: Labels; grouping: Labels} = cell.getValue()
+  const v = cell.row.original.lset
   const name = v.lset[MetricName]
   const labelBadges = Object.entries({...v.lset, ...v.grouping})
     .filter((l: [string, string]) => l[0] !== MetricName)
