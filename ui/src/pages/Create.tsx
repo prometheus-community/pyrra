@@ -124,7 +124,7 @@ const Create = (): JSX.Element => {
         }
         setPreviewStatus('success')
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         setPreviewStatus(err instanceof PreviewUnavailableError ? 'unavailable' : 'error')
       })
   }
@@ -140,7 +140,7 @@ const Create = (): JSX.Element => {
         setDetailObjective(objective)
         setPreviewStatus('success')
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         setPreviewStatus(err instanceof PreviewUnavailableError ? 'unavailable' : 'error')
       })
   }
