@@ -104,7 +104,7 @@ const AlertsTable = ({
             if (a.short?.current === -1.0) {
               shortCurrent = 'NaN'
             } else if (a.short?.current === undefined) {
-              shortCurrent = (0).toFixed(3).toString()
+              shortCurrent = (0).toFixed(3)
             } else {
               shortCurrent = a.short.current.toFixed(3)
             }
@@ -112,7 +112,7 @@ const AlertsTable = ({
             if (a.long?.current === -1.0) {
               longCurrent = 'NaN'
             } else if (a.long?.current === undefined) {
-              longCurrent = (0).toFixed(3).toString()
+              longCurrent = (0).toFixed(3)
             } else {
               longCurrent = a.long?.current.toFixed(3)
             }
