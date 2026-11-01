@@ -38,8 +38,6 @@ const ObjectiveTile = ({objective}: ObjectiveTileProps): React.JSX.Element => {
           <p className="opacity-50 font-medium">faster than {renderLatencyTarget(objective)}</p>
         </div>
       )
-    default:
-      return <div></div>
   }
 }
 

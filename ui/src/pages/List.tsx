@@ -238,8 +238,6 @@ const tableReducer = (state: TableState, action: TableAction): TableState => {
         },
       }
     }
-    default:
-      return state
   }
 }
 
