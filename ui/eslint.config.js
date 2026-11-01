@@ -48,12 +48,15 @@ export default [
       'no-labels': ['error', { allowLoop: true }],
       // console.error/warn stay allowed: errors from failed fetches still need reporting.
       'no-console': ['error', { allow: ['warn', 'error'] }],
+      // props: false because labelColor's shared colour counter and the yaml
+      // visitor mutate their arguments by design; rebinding a parameter itself
+      // is the pattern worth catching.
+      'no-param-reassign': ['error', {props: false}],
       'no-void': 'off',
       // TODO fix these in follow ups
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/no-unnecessary-condition': 'off',
       '@typescript-eslint/no-unsafe-type-assertion': 'off',
-      'no-param-reassign': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',
       '@typescript-eslint/no-explicit-any': 'off',

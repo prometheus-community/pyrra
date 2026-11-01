@@ -185,8 +185,8 @@ const RequestsGraph = ({
   )
 }
 
-const labelColor = (picked: Record<string, number>, label: string): string => {
-  label = label !== undefined ? label.toLowerCase() : ''
+const labelColor = (picked: Record<string, number>, rawLabel: string): string => {
+  const label = rawLabel !== undefined ? rawLabel.toLowerCase() : ''
   let color = ''
   if (label === '{}' || label === '' || label === 'value') {
     color = greens[picked.greens % greens.length]
