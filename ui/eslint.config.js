@@ -55,7 +55,6 @@ export default [
       'no-param-reassign': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',
-      '@typescript-eslint/prefer-regexp-exec': 'off',
       '@typescript-eslint/use-unknown-in-catch-callback-variable': 'off',
       'no-console': 'off',
       '@typescript-eslint/no-explicit-any': 'off',

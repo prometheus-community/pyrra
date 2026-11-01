@@ -14,7 +14,7 @@
 export const PYRRA_SELECTOR_RE = /^[a-zA-Z0-9_:{}[\]=!~"'`,.\s|/()*+-]*$/
 
 export const metricName = (text: string): string => {
-  const m = text.match(/^\s*([a-zA-Z_:][a-zA-Z0-9_:]*)/)
+  const m = /^\s*([a-zA-Z_:][a-zA-Z0-9_:]*)/.exec(text)
   return m !== null ? m[1] : ''
 }
 
@@ -43,13 +43,13 @@ export const suggest = (text: string, caret: number): Suggestion => {
 
   if (!inBraces) {
     // metric-name context (before any brace)
-    const tok = (before.match(/[a-zA-Z0-9_:]*$/) ?? [''])[0]
+    const tok = (/[a-zA-Z0-9_:]*$/.exec(before) ?? [''])[0]
     return {mode: 'metric', metric, label: '', token: tok, replaceStart: caret - tok.length, replaceEnd: caret}
   }
 
   const segStart = Math.max(braceOpen, before.lastIndexOf(',')) + 1
   const seg = before.slice(segStart)
-  const op = seg.match(/(=~|!=|!~|=)/)
+  const op = /(=~|!=|!~|=)/.exec(seg)
 
   if (op?.index !== undefined) {
     // value context

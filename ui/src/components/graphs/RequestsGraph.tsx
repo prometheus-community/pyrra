@@ -192,25 +192,25 @@ const labelColor = (picked: Record<string, number>, label: string): string => {
     color = greens[picked.greens % greens.length]
     picked.greens++
   }
-  if (label.match(/(2\d{2}|2\w{2}|ok|noerror|hit)/) != null) {
+  if (/(2\d{2}|2\w{2}|ok|noerror|hit)/.exec(label) != null) {
     color = greens[picked.greens % greens.length]
     picked.greens++
   }
-  if (label.match(/(3\d{2}|3\w{2})/) != null) {
+  if (/(3\d{2}|3\w{2})/.exec(label) != null) {
     color = yellows[picked.yellows % yellows.length]
     picked.yellows++
   }
   if (
-    label.match(
-      /(4\d{2}|4\w{2}|canceled|invalidargument|notfound|alreadyexists|permissiondenied|unauthenticated|resourceexhausted|failedprecondition|aborted|outofrange|nxdomain|refused)/,
+    /(4\d{2}|4\w{2}|canceled|invalidargument|notfound|alreadyexists|permissiondenied|unauthenticated|resourceexhausted|failedprecondition|aborted|outofrange|nxdomain|refused)/.exec(
+      label,
     ) != null
   ) {
     color = blues[picked.blues % blues.length]
     picked.blues++
   }
   if (
-    label.match(
-      /(5\d{2}|5\w{2}|unknown|deadlineexceeded|unimplemented|internal|unavailable|dataloss|servfail|miss)/,
+    /(5\d{2}|5\w{2}|unknown|deadlineexceeded|unimplemented|internal|unavailable|dataloss|servfail|miss)/.exec(
+      label,
     ) != null
   ) {
     color = reds[picked.reds % reds.length]
