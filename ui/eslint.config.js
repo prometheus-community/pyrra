@@ -46,6 +46,8 @@ export default [
       ],
 
       'no-labels': ['error', { allowLoop: true }],
+      // console.error/warn stay allowed: errors from failed fetches still need reporting.
+      'no-console': ['error', { allow: ['warn', 'error'] }],
       'no-void': 'off',
       // TODO fix these in follow ups
       '@typescript-eslint/explicit-function-return-type': 'off',
@@ -54,7 +56,6 @@ export default [
       'no-param-reassign': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',
-      'no-console': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unnecessary-type-conversion': 'off',
       '@typescript-eslint/switch-exhaustiveness-check': 'off',

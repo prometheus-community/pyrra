@@ -63,7 +63,7 @@ const AlertsTable = ({
       .then((resp: GetAlertsResponse) => {
         setAlerts(resp.alerts)
       })
-      .catch((err: unknown) => { console.log(err); })
+      .catch((err: unknown) => { console.error(err); })
   }, [client, objective, grouping])
 
   const {response: alertsRangeResponse} = usePrometheusQueryRange(

@@ -444,8 +444,6 @@ const VolumeWarningTooltip = ({
 const emptyData: row[] = []
 
 const List = () => {
-  console.log('render List')
-
   document.title = 'Objectives - Pyrra'
   const navigate = useNavigate()
 
@@ -511,7 +509,7 @@ const List = () => {
             }
           })
         })
-        .catch((err: unknown) => { console.log(err); })
+        .catch((err: unknown) => { console.error(err); })
 
       objectiveResponse.objectives.forEach((o: Objective) => {
         dispatchTable({
@@ -551,7 +549,7 @@ const List = () => {
             }
           })
           .catch((err: unknown) => {
-            console.log(err)
+            console.error(err)
             dispatchTable({type: TableActionType.SetStatusError, lset: labelsString(o.labels)})
           })
       })
@@ -851,7 +849,6 @@ const NameCell = ({cell, onFilter}: NameCellProps): React.JSX.Element => {
           event.stopPropagation()
           const lset: Labels = {}
           lset[l[0]] = l[1]
-          console.log('filter', lset)
           onFilter(lset)
         }}>
         {l[0]}={l[1]}
