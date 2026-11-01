@@ -339,7 +339,7 @@ const columns = [
       if (v === undefined) {
         return 'No data'
       }
-      return `${Math.floor(v).toLocaleString()}`
+      return Math.floor(v).toLocaleString()
     },
     sortingFn: sortingNumberNull,
   }),

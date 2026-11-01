@@ -230,7 +230,7 @@ const BurnrateGraph = ({
               values: (uplot: uPlot, v: number[]) => formatAxisDates(v),
             },
             {
-              values: (uplot: uPlot, v: number[]) => v.map((v: number) => `${v.toFixed(1)}`),
+              values: (uplot: uPlot, v: number[]) => v.map((v: number) => v.toFixed(1)),
             },
           ],
           hooks: {
