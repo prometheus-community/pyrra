@@ -1,4 +1,4 @@
-import {type ConnectError, type Client} from '@connectrpc/connect'
+import {type Client} from '@connectrpc/connect'
 import {type QueryStatus} from '@tanstack/react-query'
 import {type GetStatusResponse, type ListResponse, type ObjectiveService, type Timeseries} from './proto/objectives/v1alpha1/objectives_pb'
 import {timestampFromDate} from '@bufbuild/protobuf/wkt'
@@ -6,7 +6,7 @@ import {type QueryOptions, useConnectQuery} from './query'
 
 export interface ObjectivesListResponse {
   response: ListResponse | null
-  error: ConnectError
+  error: Error | null
   status: QueryStatus
 }
 
@@ -24,12 +24,12 @@ export const useObjectivesList = (
     options,
   })
 
-  return {response: data ?? null, error: error as ConnectError, status}
+  return {response: data ?? null, error, status}
 }
 
 export interface ObjectivesQueryResponse {
   response: GetStatusResponse | null
-  error: ConnectError
+  error: Error | null
   status: QueryStatus
 }
 
@@ -49,12 +49,12 @@ export const useObjectivesStatus = (
     options,
   })
 
-  return {response: data ?? null, error: error as ConnectError, status}
+  return {response: data ?? null, error, status}
 }
 
 export interface DurationTimeseriesResponse {
   timeseries: Timeseries[]
-  error: ConnectError
+  error: Error | null
   status: QueryStatus
 }
 
@@ -81,7 +81,7 @@ export const useGraphDuration = (
     options,
   })
 
-  return {timeseries: data?.timeseries ?? [], error: error as ConnectError, status}
+  return {timeseries: data?.timeseries ?? [], error, status}
 }
 
 // usePreviewGraphDuration fetches the same percentiles for a draft SLO that
@@ -107,5 +107,5 @@ export const usePreviewGraphDuration = (
     options,
   })
 
-  return {timeseries: data?.timeseries ?? [], error: error as ConnectError, status}
+  return {timeseries: data?.timeseries ?? [], error, status}
 }

@@ -28,7 +28,7 @@ export const durationAlignedData = (
   // The first series is a straight line (same latency target value for all timestamps)
   // showing the objective.
   if (latency !== undefined) {
-    data.push(Array(timeseries[0].series[0].values.length).fill(latency / 1000) as number[])
+    data.push(Array<number>(timeseries[0].series[0].values.length).fill(latency / 1000))
     labels.push('{quantile="target"}')
   }
 

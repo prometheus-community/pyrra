@@ -8,8 +8,6 @@ import Footer from './components/Footer'
 import {TooltipProvider} from '@/components/ui/tooltip'
 import {
   type LabelMatcher,
-  type Latency,
-  type LatencyNative,
   type Objective,
 } from './proto/objectives/v1alpha1/objectives_pb'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
@@ -86,12 +84,10 @@ export const hasObjectiveType = (o: Objective): ObjectiveType => {
 
 // returns the latency target in milliseconds
 export const latencyTarget = (o: Objective): number | undefined => {
-  const objectiveType = hasObjectiveType(o)
+  const options = o.indicator?.options
 
-  if (objectiveType === ObjectiveType.Latency) {
-    const latency: Latency = o.indicator?.options.value as Latency
-
-    const m = latency.success?.matchers.find((m: LabelMatcher) => {
+  if (options?.case === 'latency') {
+    const m = options.value.success?.matchers.find((m: LabelMatcher) => {
       return m.name === 'le'
     })
 
@@ -100,9 +96,8 @@ export const latencyTarget = (o: Objective): number | undefined => {
     }
   }
 
-  if (objectiveType === ObjectiveType.LatencyNative) {
-    const ln = o.indicator?.options.value as LatencyNative
-    return parseDuration(ln.latency) ?? undefined
+  if (options?.case === 'latencyNative') {
+    return parseDuration(options.value.latency) ?? undefined
   }
 
   return undefined
@@ -119,9 +114,8 @@ export const renderLatencyTarget = (o: Objective): string => {
 
     return formatDuration(latency)
   }
-  if (objectiveType === ObjectiveType.LatencyNative) {
-    const ln = o.indicator?.options.value as LatencyNative
-    return ln.latency
+  if (o.indicator?.options.case === 'latencyNative') {
+    return o.indicator.options.value.latency
   }
 
   return ''
