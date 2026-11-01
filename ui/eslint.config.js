@@ -61,7 +61,6 @@ export default [
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-useless-default-assignment': 'off',
       'radix': 'off',
-      '@typescript-eslint/no-unnecessary-template-expression': 'off',
       '@typescript-eslint/no-unnecessary-type-conversion': 'off',
       '@typescript-eslint/no-unnecessary-type-assertion': 'off',
       '@typescript-eslint/switch-exhaustiveness-check': 'off',
