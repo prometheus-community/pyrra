@@ -100,7 +100,7 @@ const AlertsTable = ({
         <TableBody>
           {alerts.map((a: Alert, i: number) => {
             // TODO: Refactor all of this to read the current value from alertsSeries
-            let shortCurrent = ''
+            let shortCurrent: string
             if (a.short?.current === -1.0) {
               shortCurrent = 'NaN'
             } else if (a.short?.current === undefined) {
@@ -108,7 +108,7 @@ const AlertsTable = ({
             } else {
               shortCurrent = a.short.current.toFixed(3)
             }
-            let longCurrent = ''
+            let longCurrent: string
             if (a.long?.current === -1.0) {
               longCurrent = 'NaN'
             } else if (a.long?.current === undefined) {
