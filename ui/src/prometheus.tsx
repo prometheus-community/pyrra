@@ -19,10 +19,10 @@ export interface PrometheusQueryResponse {
 export const usePrometheusQuery = (
   client: Client<typeof PrometheusService>,
   query: string,
-  time: number,
+  rawTime: number,
   options?: QueryOptions,
 ): PrometheusQueryResponse => {
-  time = Math.floor(time)
+  const time = Math.floor(rawTime)
   const {data, error, status} = useConnectQuery<QueryResponse>({
     key: ['query', query, time],
     func: async () => {
@@ -43,14 +43,14 @@ export interface PrometheusQueryRangeResponse {
 export const usePrometheusQueryRange = (
   client: Client<typeof PrometheusService>,
   query: string,
-  start: number,
-  end: number,
-  step: number,
+  rawStart: number,
+  rawEnd: number,
+  rawStep: number,
   options?: QueryOptions,
 ): PrometheusQueryRangeResponse => {
-  start = Math.floor(start)
-  end = Math.floor(end)
-  step = Math.floor(step) !== 0 ? Math.floor(step) : 1
+  const start = Math.floor(rawStart)
+  const end = Math.floor(rawEnd)
+  const step = Math.floor(rawStep) !== 0 ? Math.floor(rawStep) : 1
   const {data, error, status} = useConnectQuery<QueryRangeResponse>({
     key: ['queryRange', query, start / 10, end / 10, step],
     func: async () => {
