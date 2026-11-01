@@ -60,7 +60,6 @@ export default [
       '@typescript-eslint/no-useless-default-assignment': 'off',
       '@typescript-eslint/no-unnecessary-type-conversion': 'off',
       '@typescript-eslint/switch-exhaustiveness-check': 'off',
-      'no-useless-assignment': 'off',
 
       // Style and size rules from eslint-config-love 158 that this codebase does not follow.
       '@typescript-eslint/no-magic-numbers': 'off',
