@@ -61,7 +61,7 @@ export const parseDuration = (durationStr: string): number | null => {
     if (matches[pos] === undefined) {
       return
     }
-    const n = parseInt(matches[pos])
+    const n = parseInt(matches[pos], 10)
     dur += n * mult
   }
 

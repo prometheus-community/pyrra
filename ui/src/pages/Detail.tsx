@@ -50,7 +50,7 @@ const Detail = () => {
     let to: number = Date.now()
     if (toParam !== null) {
       if (!toParam.includes('now')) {
-        to = parseInt(toParam)
+        to = parseInt(toParam, 10)
       }
     }
 
@@ -62,7 +62,7 @@ const Detail = () => {
           from = to - duration
         }
       } else {
-        from = parseInt(fromParam)
+        from = parseInt(fromParam, 10)
       }
     }
 
