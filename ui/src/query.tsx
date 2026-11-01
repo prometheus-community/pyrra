@@ -1,7 +1,7 @@
 import {useQuery, type UseQueryResult} from '@tanstack/react-query'
 
 interface Props<ConnectResponse> {
-  key: string | any[]
+  key: string | unknown[]
   func: () => Promise<ConnectResponse>
   options?: QueryOptions
 }

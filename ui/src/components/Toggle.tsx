@@ -1,9 +1,9 @@
-import React, {type EventHandler, type JSX} from 'react'
+import React, {type JSX, type MouseEventHandler} from 'react'
 import {cn} from '@/lib/utils'
 
 interface ToggleProps {
   checked?: boolean
-  onChange?: EventHandler<any>
+  onChange?: MouseEventHandler<HTMLButtonElement>
   onText?: string
   offText?: string
 }
