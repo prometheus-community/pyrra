@@ -137,7 +137,7 @@ const RequestsGraph = ({
                       label: value,
                       stroke: `#${labelColor(pickedColors, value)}`,
                       gaps: seriesGaps(from / 1000, to / 1000),
-                      value: (u, v) => (v == null ? '-' : `${v.toFixed(2)}req/s`),
+                      value: (u, v) => (v === null || v === undefined ? '-' : `${v.toFixed(2)}req/s`),
                     }
                   }),
                 ],
@@ -192,18 +192,18 @@ const labelColor = (picked: Record<string, number>, label: string): string => {
     color = greens[picked.greens % greens.length]
     picked.greens++
   }
-  if (/(2\d{2}|2\w{2}|ok|noerror|hit)/.exec(label) != null) {
+  if (/(2\d{2}|2\w{2}|ok|noerror|hit)/.exec(label) !== null) {
     color = greens[picked.greens % greens.length]
     picked.greens++
   }
-  if (/(3\d{2}|3\w{2})/.exec(label) != null) {
+  if (/(3\d{2}|3\w{2})/.exec(label) !== null) {
     color = yellows[picked.yellows % yellows.length]
     picked.yellows++
   }
   if (
     /(4\d{2}|4\w{2}|canceled|invalidargument|notfound|alreadyexists|permissiondenied|unauthenticated|resourceexhausted|failedprecondition|aborted|outofrange|nxdomain|refused)/.exec(
       label,
-    ) != null
+    ) !== null
   ) {
     color = blues[picked.blues % blues.length]
     picked.blues++
@@ -211,7 +211,7 @@ const labelColor = (picked: Record<string, number>, label: string): string => {
   if (
     /(5\d{2}|5\w{2}|unknown|deadlineexceeded|unimplemented|internal|unavailable|dataloss|servfail|miss)/.exec(
       label,
-    ) != null
+    ) !== null
   ) {
     color = reds[picked.reds % reds.length]
     picked.reds++
