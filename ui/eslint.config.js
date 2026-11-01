@@ -56,7 +56,6 @@ export default [
       '@typescript-eslint/no-unsafe-member-access': 'off',
       'no-console': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-useless-default-assignment': 'off',
       '@typescript-eslint/no-unnecessary-type-conversion': 'off',
       '@typescript-eslint/switch-exhaustiveness-check': 'off',
       'no-useless-assignment': 'off',
