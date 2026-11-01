@@ -209,7 +209,7 @@ const tableReducer = (state: TableState, action: TableAction): TableState => {
         let isSuperset = true
         Object.entries(action.labels).forEach(([k, v]) => {
           if (allLabels[k] === undefined) {
-            return false
+            return
           }
           if (allLabels[k] !== v) {
             isSuperset = false
