@@ -150,7 +150,8 @@ export const MetricInput = ({id, value, onChange, placeholder, client}: MetricIn
       setActive((a) => Math.max(a - 1, 0))
     } else if (e.key === 'Enter') {
       e.preventDefault()
-      if (items[active] !== undefined) apply(items[active])
+      const item = items.at(active)
+      if (item !== undefined) apply(item)
     } else if (e.key === 'Escape') {
       setFocused(false)
     }
@@ -240,7 +241,8 @@ export const GroupingInput = ({value, onChange, client}: GroupingInputProps): Re
   const onKeyDown = (e: React.KeyboardEvent): void => {
     if (e.key === 'Enter' || e.key === ',') {
       e.preventDefault()
-      if (open && suggestions[active] !== undefined) add(suggestions[active])
+      const suggestion = suggestions.at(active)
+      if (open && suggestion !== undefined) add(suggestion)
       else add()
     } else if (e.key === 'Backspace' && text === '' && value.length > 0) {
       remove(value[value.length - 1])

@@ -49,7 +49,7 @@ const DurationGraph = ({
   } = useMemo(() => durationAlignedData(timeseries, latency), [timeseries, latency])
 
   const setWidthFromContainer = () => {
-    if (targetRef.current !== undefined && targetRef.current !== null) {
+    if (targetRef.current !== null) {
       setWidth(targetRef.current.offsetWidth)
     }
   }
@@ -113,7 +113,7 @@ const DurationGraph = ({
                       dash: i === 0 ? [25, 10] : undefined,
                       label: parseLabelValue(label),
                       gaps: seriesGaps(from / 1000, to / 1000),
-                      value: (u, v) => (v === null || v === undefined ? '-' : formatDuration(v * 1000, 1)),
+                      value: (u, v: number | null | undefined) => (v === null || v === undefined ? '-' : formatDuration(v * 1000, 1)),
                     }
                   }),
                 ],

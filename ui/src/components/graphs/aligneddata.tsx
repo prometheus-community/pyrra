@@ -15,7 +15,7 @@ export const convertAlignedData = (response: QueryRangeResponse | null): Aligned
   const labels: Labels[] = []
   let data: AlignedData = []
 
-  if (response?.options.case === 'matrix') {
+  if (response.options.case === 'matrix') {
     const samples = new Map<number, Array<number | null | undefined>>()
 
     const series = response.options.value.samples

@@ -58,10 +58,12 @@ export const parseDuration = (durationStr: string): number | null => {
   // Parse the match at pos `pos` in the regex and use `mult` to turn that
   // into ms, then add that value to the total parsed duration.
   const m = (pos: number, mult: number) => {
-    if (matches[pos] === undefined) {
+    // Optional groups that didn't participate in the match are undefined at runtime.
+    const group = matches.at(pos)
+    if (group === undefined) {
       return
     }
-    const n = parseInt(matches[pos], 10)
+    const n = parseInt(group, 10)
     dur += n * mult
   }
 

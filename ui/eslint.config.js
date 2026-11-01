@@ -55,7 +55,6 @@ export default [
       'no-void': 'off',
       // TODO fix these in follow ups
       '@typescript-eslint/explicit-function-return-type': 'off',
-      '@typescript-eslint/no-unnecessary-condition': 'off',
       '@typescript-eslint/no-unsafe-type-assertion': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',

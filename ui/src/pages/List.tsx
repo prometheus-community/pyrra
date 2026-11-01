@@ -152,7 +152,9 @@ const tableReducer = (state: TableState, action: TableAction): TableState => {
     case TableActionType.SetObjectiveWithStatus: {
       // It is possible that we may need to merge some previous state
       let severity: string | null = null
-      const o = state.objectives[action.lset]
+      // Index access on a Record is undefined for unknown keys even though the type says otherwise.
+      const known: Partial<TableState['objectives']> = state.objectives
+      const o = known[action.lset]
       if (o !== undefined) {
         severity = o.severity
       }
@@ -204,18 +206,9 @@ const tableReducer = (state: TableState, action: TableAction): TableState => {
     case TableActionType.SetAlert: {
       // Find the objective this alert's labels is the super set for.
       const result = Object.entries(state.objectives).find(([, o]) => {
-        const allLabels: Labels = {...o.objective.labels, ...o.groupingLabels}
+        const allLabels: Partial<Labels> = {...o.objective.labels, ...o.groupingLabels}
 
-        let isSuperset = true
-        Object.entries(action.labels).forEach(([k, v]) => {
-          if (allLabels[k] === undefined) {
-            return
-          }
-          if (allLabels[k] !== v) {
-            isSuperset = false
-          }
-        })
-        return isSuperset
+        return Object.entries(action.labels).every(([k, v]) => allLabels[k] === undefined || allLabels[k] === v)
       })
       if (result === undefined) {
         return state
@@ -367,7 +360,7 @@ const columns = [
     header: 'Availability',
     cell: (props) => {
       const v = props.getValue()
-      const target = props.row.getValue<number>('objective') ?? 0
+      const target = props.row.getValue<number | undefined>('objective') ?? 0
       if (v === undefined) {
         return 'No data'
       }
@@ -535,7 +528,7 @@ const List = () => {
               resp.status.forEach((s: ObjectiveStatus) => {
                 const so = clone(ObjectiveSchema, o)
                 // Identify by the combined labels
-                const sLabels: Labels = s.labels ?? {}
+                const sLabels: Labels = {...s.labels}
                 const soLabels: Labels = {...o.labels, ...sLabels}
 
                 dispatchTable({
@@ -567,7 +560,7 @@ const List = () => {
         .filter((k): boolean => {
           // first filter for labels filtered for
           const o = table.objectives[k]
-          const labels = {...o.objective.labels, ...o.groupingLabels}
+          const labels: Partial<Labels> = {...o.objective.labels, ...o.groupingLabels}
           for (const k in filterLabels) {
             // if label doesn't exist by key or if values differ filter out.
             if (labels[k] === undefined || labels[k] !== filterLabels[k]) {
@@ -592,7 +585,7 @@ const List = () => {
             alerts: o.severity ?? '',
           }
           return r
-        }) ?? null
+        })
     )
   }, [table.objectives, filterSearch, filterLabels])
 
@@ -638,7 +631,7 @@ const List = () => {
     )
   }
 
-  if (objectiveError !== null && objectiveError !== undefined) {
+  if (objectiveError !== null) {
     return (
       <>
         <Navbar />

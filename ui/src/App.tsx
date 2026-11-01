@@ -16,9 +16,9 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {formatDuration, parseDuration} from './duration'
 
 // @ts-expect-error - this is passed from the HTML template.
-export const PATH_PREFIX: string = window.PATH_PREFIX
+export const PATH_PREFIX: string | undefined = window.PATH_PREFIX
 // @ts-expect-error - this is passed from the HTML template.
-export const API_BASEPATH: string = window.API_BASEPATH
+export const API_BASEPATH: string | undefined = window.API_BASEPATH
 // @ts-expect-error - this is passed from the HTML template.
 export const EXTERNAL_URL: string = window.EXTERNAL_URL
 // @ts-expect-error - this is passed from the HTML template.

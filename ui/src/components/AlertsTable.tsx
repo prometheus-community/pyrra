@@ -114,7 +114,7 @@ const AlertsTable = ({
             } else if (a.long?.current === undefined) {
               longCurrent = (0).toFixed(3).toString()
             } else {
-              longCurrent = a.long?.current.toFixed(3)
+              longCurrent = a.long.current.toFixed(3)
             }
 
             const seriesFiringIndex = alertsLabels.findIndex((al: Labels): boolean => {
@@ -177,7 +177,7 @@ const AlertsTable = ({
                   <TableCell style={{textAlign: 'right'}}>
                     <Tooltip>
                       <TooltipTrigger>
-                        <span>{(a.factor * (1 - objective?.target)).toFixed(3)}</span>
+                        <span>{(a.factor * (1 - objective.target)).toFixed(3)}</span>
                       </TooltipTrigger>
                       <TooltipContent>
                         {a.factor} * (1 - {objective.target})

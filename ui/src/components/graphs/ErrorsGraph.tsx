@@ -43,7 +43,7 @@ const ErrorsGraph = ({
   const [width, setWidth] = useState<number>(500)
 
   const setWidthFromContainer = () => {
-    if (targetRef?.current !== undefined && targetRef?.current !== null) {
+    if (targetRef.current !== null) {
       setWidth(targetRef.current.offsetWidth)
     }
   }
@@ -145,7 +145,7 @@ const ErrorsGraph = ({
                   stroke: `#${reds[i]}`,
                   label: labelValues(label)[0],
                   gaps: seriesGaps(from / 1000, to / 1000),
-                  value: (u, v) => (v === null || v === undefined ? '-' : (100 * v).toFixed(2) + '%'),
+                  value: (u, v: number | null | undefined) => (v === null || v === undefined ? '-' : (100 * v).toFixed(2) + '%'),
                 }
               }),
             ],

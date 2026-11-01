@@ -6,7 +6,7 @@ import {type QueryOptions, useConnectQuery} from './query'
 
 export interface ObjectivesListResponse {
   response: ListResponse | null
-  error: ConnectError
+  error: ConnectError | null
   status: QueryStatus
 }
 
@@ -24,7 +24,7 @@ export const useObjectivesList = (
     options,
   })
 
-  return {response: data ?? null, error: error as ConnectError, status}
+  return {response: data ?? null, error: error as ConnectError | null, status}
 }
 
 export interface ObjectivesQueryResponse {

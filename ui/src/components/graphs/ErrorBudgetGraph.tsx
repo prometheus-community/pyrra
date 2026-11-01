@@ -44,7 +44,7 @@ const ErrorBudgetGraph = ({
   const [width, setWidth] = useState<number>(1000)
 
   const setWidthFromContainer = () => {
-    if (targetRef.current !== undefined && targetRef.current !== null) {
+    if (targetRef.current !== null) {
       setWidth(targetRef.current.offsetWidth)
     }
   }
@@ -102,8 +102,9 @@ const ErrorBudgetGraph = ({
   const canvasPadding = 20
 
   const budgetGradient = (u: uPlot) => {
-    const min = u.scales.y.min
-    const max = u.scales.y.max
+    // uPlot leaves the scale range null until it has data; its typings say number.
+    const scale: {min?: number | null; max?: number | null} = u.scales.y
+    const {min, max} = scale
 
     if (min === null || min === undefined || max === null || max === undefined) {
       return '#fff'
@@ -176,7 +177,7 @@ const ErrorBudgetGraph = ({
                   {
                     fill: budgetGradient,
                     gaps: seriesGaps(from / 1000, to / 1000),
-                    value: (u: uPlot, v: number) => (v === null || v === undefined ? '-' : v.toFixed(2) + '%'),
+                    value: (u: uPlot, v: number | null | undefined) => (v === null || v === undefined ? '-' : v.toFixed(2) + '%'),
                   },
                 ],
                 scales: {

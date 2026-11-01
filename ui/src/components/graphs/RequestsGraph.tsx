@@ -43,7 +43,7 @@ const RequestsGraph = ({
   const [width, setWidth] = useState<number>(500)
 
   const setWidthFromContainer = () => {
-    if (targetRef?.current !== undefined && targetRef?.current !== null) {
+    if (targetRef.current !== null) {
       setWidth(targetRef.current.offsetWidth)
     }
   }
@@ -137,7 +137,7 @@ const RequestsGraph = ({
                       label: value,
                       stroke: `#${labelColor(pickedColors, value)}`,
                       gaps: seriesGaps(from / 1000, to / 1000),
-                      value: (u, v) => (v === null || v === undefined ? '-' : `${v.toFixed(2)}req/s`),
+                      value: (u, v: number | null | undefined) => (v === null || v === undefined ? '-' : `${v.toFixed(2)}req/s`),
                     }
                   }),
                 ],
@@ -185,7 +185,7 @@ const RequestsGraph = ({
   )
 }
 
-const labelColor = (picked: Record<string, number>, rawLabel: string): string => {
+const labelColor = (picked: Record<string, number>, rawLabel: string | undefined): string => {
   const label = rawLabel !== undefined ? rawLabel.toLowerCase() : ''
   let color = ''
   if (label === '{}' || label === '' || label === 'value') {

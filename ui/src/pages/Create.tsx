@@ -152,7 +152,8 @@ const Create = (): JSX.Element => {
   }
 
   const copyYaml = (): void => {
-    if (navigator.clipboard !== undefined) {
+    // navigator.clipboard is missing in insecure (plain http) contexts, which lib.dom doesn't model.
+    if ('clipboard' in navigator) {
       void navigator.clipboard.writeText(yaml)
       setCopied(true)
       setTimeout(() => { setCopied(false); }, 1500)
@@ -433,7 +434,7 @@ const Create = (): JSX.Element => {
                 <code>{yaml}</code>
               </pre>
             </div>
-          ) : showGroupings && groupingObjective !== null ? (
+          ) : showGroupings ? (
             <GroupingsTable
               baseUrl={baseUrl}
               objective={groupingObjective}

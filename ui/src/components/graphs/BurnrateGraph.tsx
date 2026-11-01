@@ -41,7 +41,7 @@ const BurnrateGraph = ({
   const [width, setWidth] = useState<number>(500)
 
   const setWidthFromContainer = () => {
-    if (targetRef?.current !== undefined && targetRef?.current !== null) {
+    if (targetRef.current !== null) {
       setWidth(targetRef.current.offsetWidth)
     }
   }
@@ -92,13 +92,7 @@ const BurnrateGraph = ({
   const shortData = convertAlignedData(shortResponse)
   const longData = convertAlignedData(longResponse)
 
-  const responses: AlignedDataResponse[] = []
-  if (shortData !== null) {
-    responses.push(shortData)
-  }
-  if (longData !== null) {
-    responses.push(longData)
-  }
+  const responses: AlignedDataResponse[] = [shortData, longData]
   if (pendingData.length > 0) {
     responses.push({labels: [], data: pendingData})
   }
@@ -118,12 +112,12 @@ const BurnrateGraph = ({
     Array(timestamps.length).fill(threshold),
   ]
 
-  let pendingSeries: number[] | undefined
+  let pendingSeries: Array<number | null> | undefined
   if (pendingData.length > 0) {
     pendingSeries = series[0] as number[]
   }
 
-  let firingSeries: number[] | undefined
+  let firingSeries: Array<number | null> | undefined
   if (pendingData.length > 0 && firingData.length > 0) {
     firingSeries = series[1] as number[]
   }
@@ -149,14 +143,14 @@ const BurnrateGraph = ({
                 label: 'short',
                 gaps: seriesGaps(from / 1000, to / 1000),
                 stroke: `#${reds[1]}`,
-                value: (u, v) => (v === null || v === undefined ? '-' : v.toFixed(2)),
+                value: (u, v: number | null | undefined) => (v === null || v === undefined ? '-' : v.toFixed(2)),
               },
               {
                 min: 0,
                 label: 'long',
                 gaps: seriesGaps(from / 1000, to / 1000),
                 stroke: `#${reds[2]}`,
-                value: (u, v) => (v === null || v === undefined ? '-' : v.toFixed(2)),
+                value: (u, v: number | null | undefined) => (v === null || v === undefined ? '-' : v.toFixed(2)),
               },
               {
                 label: 'threshold',
@@ -206,20 +200,20 @@ const BurnrateGraph = ({
               label: `short (${shortFormatted})`,
               gaps: seriesGaps(from / 1000, to / 1000),
               stroke: '#42a5f5',
-              value: (u, v) => (v === null || v === undefined ? '-' : v.toFixed(2)),
+              value: (u, v: number | null | undefined) => (v === null || v === undefined ? '-' : v.toFixed(2)),
             },
             {
               min: 0,
               label: `long (${longFormatted})`,
               gaps: seriesGaps(from / 1000, to / 1000),
               stroke: '#651fff',
-              value: (u, v) => (v === null || v === undefined ? '-' : v.toFixed(2)),
+              value: (u, v: number | null | undefined) => (v === null || v === undefined ? '-' : v.toFixed(2)),
             },
             {
               label: 'threshold',
               stroke: `#${greys[0]}`,
               dash: [25, 10],
-              value: (u, v) => (v === null || v === undefined ? '-' : v.toFixed(2)),
+              value: (u, v: number | null | undefined) => (v === null || v === undefined ? '-' : v.toFixed(2)),
             },
           ],
           scales: {
