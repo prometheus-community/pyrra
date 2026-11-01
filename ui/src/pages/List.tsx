@@ -511,7 +511,7 @@ const List = () => {
             }
           })
         })
-        .catch((err) => { console.log(err); })
+        .catch((err: unknown) => { console.log(err); })
 
       objectiveResponse.objectives.forEach((o: Objective) => {
         dispatchTable({
@@ -550,7 +550,7 @@ const List = () => {
               })
             }
           })
-          .catch((err) => {
+          .catch((err: unknown) => {
             console.log(err)
             dispatchTable({type: TableActionType.SetStatusError, lset: labelsString(o.labels)})
           })
