@@ -161,7 +161,7 @@ const Detail = () => {
     )
   }
 
-  if (objective == null) {
+  if (objective === null) {
     return (
       <div className="mt-12 text-center flex justify-center">
         <Spinner />

@@ -105,7 +105,7 @@ const ErrorBudgetGraph = ({
     const min = u.scales.y.min
     const max = u.scales.y.max
 
-    if (min == null || max == null) {
+    if (min === null || min === undefined || max === null || max === undefined) {
       return '#fff'
     }
 
@@ -176,7 +176,7 @@ const ErrorBudgetGraph = ({
                   {
                     fill: budgetGradient,
                     gaps: seriesGaps(from / 1000, to / 1000),
-                    value: (u: uPlot, v: number) => (v == null ? '-' : v.toFixed(2) + '%'),
+                    value: (u: uPlot, v: number) => (v === null || v === undefined ? '-' : v.toFixed(2) + '%'),
                   },
                 ],
                 scales: {

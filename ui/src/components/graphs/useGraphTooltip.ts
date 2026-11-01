@@ -95,7 +95,7 @@ export const useGraphTooltip = (containerHeight: number) => {
       const el = tooltipRef.current
       if (el === null) return
 
-      if (u.cursor.idx == null) {
+      if (u.cursor.idx === null || u.cursor.idx === undefined) {
         el.style.visibility = 'hidden'
         return
       }
