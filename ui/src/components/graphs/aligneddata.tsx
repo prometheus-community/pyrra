@@ -20,7 +20,7 @@ export const convertAlignedData = (response: QueryRangeResponse | null): Aligned
 
     const series = response.options.value.samples
     series.forEach((ss: SampleStream, i: number) => {
-      labels.push(ss.metric as Labels)
+      labels.push(ss.metric)
 
       ss.values.forEach((sp: SamplePair) => {
         const time: number = Number(sp.time)
