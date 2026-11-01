@@ -118,17 +118,17 @@ const BurnrateGraph = ({
     Array(timestamps.length).fill(threshold),
   ]
 
-  let pendingSeries: number[] | undefined
+  let pendingSeries: (typeof series)[number] | undefined
   if (pendingData.length > 0) {
-    pendingSeries = series[0] as number[]
+    pendingSeries = series[0]
   }
 
-  let firingSeries: number[] | undefined
+  let firingSeries: (typeof series)[number] | undefined
   if (pendingData.length > 0 && firingData.length > 0) {
-    firingSeries = series[1] as number[]
+    firingSeries = series[1]
   }
   if (pendingData.length === 0 && firingData.length > 0) {
-    firingSeries = series[0] as number[]
+    firingSeries = series[0]
   }
 
   // no data

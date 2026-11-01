@@ -6,7 +6,7 @@ import Navbar from '../components/Navbar'
 import {type Labels, labelsString, MetricName} from '../labels'
 import {parseAsLabels} from '../searchParams'
 import {createConnectTransport} from '@connectrpc/connect-web'
-import {createClient, Code} from '@connectrpc/connect'
+import {createClient, Code, ConnectError} from '@connectrpc/connect'
 import {clone} from '@bufbuild/protobuf'
 import {ObjectiveService, ObjectiveSchema} from '../proto/objectives/v1alpha1/objectives_pb'
 import {
@@ -637,13 +637,15 @@ const List = () => {
   }
 
   if (objectiveError !== null && objectiveError !== undefined) {
+    // Transport failures can surface as plain Errors without a gRPC code.
+    const errorCode = objectiveError instanceof ConnectError ? objectiveError.code : undefined
     return (
       <>
         <Navbar />
         <div className="container-responsive mt-[100px]">
           <div className="mt-3">
             <div>
-              {objectiveError.code === Code.Unavailable && (
+              {errorCode === Code.Unavailable && (
                 <Alert variant="destructive">
                   <AlertTitle>Backend connection failed</AlertTitle>
                   <AlertDescription>
@@ -652,8 +654,8 @@ const List = () => {
                   </AlertDescription>
                 </Alert>
               )}
-              {objectiveError.code !== Code.NotFound &&
-                objectiveError.code !== Code.Unavailable && (
+              {errorCode !== Code.NotFound &&
+                errorCode !== Code.Unavailable && (
                   <Alert variant="destructive">
                     <AlertTitle>Error loading objectives</AlertTitle>
                     <AlertDescription>{objectiveError.message}</AlertDescription>
@@ -728,7 +730,7 @@ const List = () => {
               <DropdownMenuContent align="end">
                 {columns.map((c) => {
                   const id = c.id ?? ''
-                  const header = c.header as string
+                  const header = typeof c.header === 'string' ? c.header : id
                   return (
                     <DropdownMenuCheckboxItem
                       key={id}

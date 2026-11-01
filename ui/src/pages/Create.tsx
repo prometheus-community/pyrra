@@ -243,7 +243,8 @@ const Create = (): JSX.Element => {
                 className="mb-4 flex-wrap"
                 value={[cfg.sliType]}
                 onValueChange={(val) => {
-                  if (val.length > 0) set({sliType: val[val.length - 1] as SLIType})
+                  const next = sliTabs.find((t) => t.value === val[val.length - 1])
+                  if (next !== undefined) set({sliType: next.value})
                 }}>
                 {sliTabs.map((t) => (
                   <ToggleGroupItem key={t.value} value={t.value} variant="outline" aria-label={t.label}>
@@ -404,7 +405,8 @@ const Create = (): JSX.Element => {
                 variant="outline"
                 value={[rightView]}
                 onValueChange={(val) => {
-                  if (val.length > 0) setRightView(val[val.length - 1] as 'detail' | 'yaml')
+                  const next = val[val.length - 1]
+                  if (next === 'detail' || next === 'yaml') setRightView(next)
                 }}>
                 <ToggleGroupItem value="detail" variant="outline" aria-label="Detail">
                   Detail

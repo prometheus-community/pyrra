@@ -5,14 +5,14 @@ import {
   type QueryRangeResponse,
   type QueryResponse,
 } from './proto/prometheus/v1/prometheus_pb'
-import {type ConnectError, type Client} from '@connectrpc/connect'
+import {type Client} from '@connectrpc/connect'
 import {type QueryStatus} from '@tanstack/react-query'
 import {type QueryOptions, useConnectQuery} from './query'
 import {formatDuration} from './duration'
 
 export interface PrometheusQueryResponse {
   response: QueryResponse | null
-  error: ConnectError
+  error: Error | null
   status: QueryStatus
 }
 
@@ -31,12 +31,12 @@ export const usePrometheusQuery = (
     options,
   })
 
-  return {response: data ?? null, error: error as ConnectError, status}
+  return {response: data ?? null, error, status}
 }
 
 export interface PrometheusQueryRangeResponse {
   response: QueryRangeResponse | null
-  error: ConnectError
+  error: Error | null
   status: QueryStatus
 }
 
@@ -64,7 +64,7 @@ export const usePrometheusQueryRange = (
     options,
   })
 
-  return {response: data ?? null, error: error as ConnectError, status}
+  return {response: data ?? null, error, status}
 }
 
 export interface PrometheusLabelNamesResponse {

@@ -118,7 +118,7 @@ export const useGraphTooltip = (containerHeight: number) => {
       el.style.bottom = flipY ? `${containerHeight - y}px` : ''
 
       const tsEl = el.querySelector<HTMLElement>('[data-tooltip-ts]')
-      if (tsEl !== null) tsEl.textContent = formatDate((u.data[0] as number[])[idx])
+      if (tsEl !== null) tsEl.textContent = formatDate(u.data[0][idx])
 
       const rowsEl = el.querySelector<HTMLElement>('[data-tooltip-rows]')
       if (rowsEl === null) return
@@ -127,7 +127,7 @@ export const useGraphTooltip = (containerHeight: number) => {
       for (let si = 1; si < u.series.length; si++) {
         const s = u.series[si]
         if (s.show !== true) continue
-        const rawVal = (u.data[si] as Array<number | null>)[idx]
+        const rawVal = u.data[si][idx] ?? null
         const formatted =
           typeof s.value === 'function' && rawVal !== null
             ? String(s.value(u, rawVal, si, idx))
