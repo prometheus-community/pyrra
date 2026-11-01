@@ -15,17 +15,23 @@ import {
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {formatDuration, parseDuration} from './duration'
 
-// @ts-expect-error - this is passed from the HTML template.
+// Injected by the HTML template, not by the bundle.
+declare global {
+  interface Window {
+    PATH_PREFIX: string
+    API_BASEPATH: string
+    EXTERNAL_URL: string
+    EXTERNAL_GRAFANA_DATASOURCE_ID: string
+    EXTERNAL_GRAFANA_ORG_ID: string
+    VERSION: string
+  }
+}
+
 export const PATH_PREFIX: string = window.PATH_PREFIX
-// @ts-expect-error - this is passed from the HTML template.
 export const API_BASEPATH: string = window.API_BASEPATH
-// @ts-expect-error - this is passed from the HTML template.
 export const EXTERNAL_URL: string = window.EXTERNAL_URL
-// @ts-expect-error - this is passed from the HTML template.
 export const EXTERNAL_GRAFANA_DATASOURCE_ID: string = window.EXTERNAL_GRAFANA_DATASOURCE_ID
-// @ts-expect-error - this is passed from the HTML template.
 export const EXTERNAL_GRAFANA_ORG_ID: string = window.EXTERNAL_GRAFANA_ORG_ID
-// @ts-expect-error - this is passed from the HTML template.
 export const VERSION: string = window.VERSION
 
 const queryClient = new QueryClient({
