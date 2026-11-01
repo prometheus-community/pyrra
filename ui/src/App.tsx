@@ -16,8 +16,9 @@ import {formatDuration, parseDuration} from './duration'
 // Injected by the HTML template, not by the bundle.
 declare global {
   interface Window {
-    PATH_PREFIX: string
-    API_BASEPATH: string
+    // Unset when the app runs outside the template (e.g. the dev server).
+    PATH_PREFIX?: string
+    API_BASEPATH?: string
     EXTERNAL_URL: string
     EXTERNAL_GRAFANA_DATASOURCE_ID: string
     EXTERNAL_GRAFANA_ORG_ID: string
@@ -25,8 +26,8 @@ declare global {
   }
 }
 
-export const PATH_PREFIX: string = window.PATH_PREFIX
-export const API_BASEPATH: string = window.API_BASEPATH
+export const PATH_PREFIX: string | undefined = window.PATH_PREFIX
+export const API_BASEPATH: string | undefined = window.API_BASEPATH
 export const EXTERNAL_URL: string = window.EXTERNAL_URL
 export const EXTERNAL_GRAFANA_DATASOURCE_ID: string = window.EXTERNAL_GRAFANA_DATASOURCE_ID
 export const EXTERNAL_GRAFANA_ORG_ID: string = window.EXTERNAL_GRAFANA_ORG_ID

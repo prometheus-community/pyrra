@@ -55,7 +55,6 @@ export default [
       'no-void': 'off',
       // TODO fix these in follow ups
       '@typescript-eslint/explicit-function-return-type': 'off',
-      '@typescript-eslint/no-unnecessary-condition': 'off',
       '@typescript-eslint/no-unnecessary-type-conversion': 'off',
 
       // Style and size rules from eslint-config-love 158 that this codebase does not follow.

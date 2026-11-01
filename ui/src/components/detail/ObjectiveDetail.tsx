@@ -79,7 +79,7 @@ const Header = (): JSX.Element => {
         <h3>{name}</h3>
         <ObjectiveLabels labels={objective.labels} grouping={grouping} />
       </div>
-      {objective.description !== undefined && objective.description !== '' ? (
+      {objective.description !== '' ? (
         <div
           className="w-full md:w-1/2 3xl:w-5/12 3xl:ml-[8.33%]"
           style={{marginTop: hasLabels ? 12 : 0}}>
