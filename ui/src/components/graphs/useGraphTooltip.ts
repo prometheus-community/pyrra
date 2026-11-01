@@ -132,7 +132,8 @@ export const useGraphTooltip = (containerHeight: number) => {
           typeof s.value === 'function' && rawVal !== null
             ? String(s.value(u, rawVal, si, idx))
             : String(rawVal ?? '-')
-        const stroke = (s as any)._stroke
+        // _stroke is the resolved colour uPlot keeps internally; it is not in its typings.
+        const stroke = '_stroke' in s ? s._stroke : undefined
         const color = typeof stroke === 'string' ? stroke : '#888'
         html += `<div class="flex items-center justify-between gap-3 py-0.5">
         <div class="flex items-center gap-1.5 min-w-0">
