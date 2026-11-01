@@ -36,7 +36,7 @@ const RequestsGraph = ({
   uPlotCursor,
   type,
   updateTimeRange,
-  absolute = false,
+  absolute,
 }: RequestsGraphProps): JSX.Element => {
   const targetRef = useRef<HTMLDivElement>(null)
 

@@ -36,7 +36,7 @@ const ErrorBudgetGraph = ({
   to,
   uPlotCursor,
   updateTimeRange,
-  absolute = false,
+  absolute,
   rescale,
 }: ErrorBudgetGraphProps): JSX.Element => {
   const targetRef = useRef<HTMLDivElement>(null)

@@ -36,7 +36,7 @@ const ErrorsGraph = ({
   to,
   uPlotCursor,
   updateTimeRange,
-  absolute = false,
+  absolute,
 }: ErrorsGraphProps): JSX.Element => {
   const targetRef = useRef<HTMLDivElement>(null)
 
