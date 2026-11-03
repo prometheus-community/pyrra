@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
+
+# renovate: datasource=golang-version depName=go
+go_version=1.26.10
+# renovate: datasource=github-releases depName=prometheus/prometheus
+prometheus_version=3.15.1
+node_version=$(tr -d '[:space:]' < .node-version)
+
+case "$(uname -m)" in
+  x86_64) arch=amd64; node_arch=x64 ;;
+  aarch64) arch=arm64; node_arch=arm64 ;;
+  *) echo "Unsupported architecture: $(uname -m)" >&2; exit 1 ;;
+esac
+
+if ! command -v gcc >/dev/null || ! command -v make >/dev/null ||
+   ! command -v curl >/dev/null || ! command -v jq >/dev/null; then
+  sudo apt-get update
+  sudo env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends build-essential ca-certificates curl jq
+fi
+
+temporary=$(mktemp -d)
+trap 'rm -rf "$temporary"' EXIT
+export PATH="/usr/local/bin:$PATH"
+
+echo "Preparing Go ${go_version}"
+if [[ "$(go version 2>/dev/null || true)" != "go version go${go_version} linux/${arch}" ]]; then
+  archive="go${go_version}.linux-${arch}.tar.gz"
+  curl -fsSL 'https://go.dev/dl/?mode=json&include=all' -o "$temporary/go-downloads.json"
+  checksum=$(jq -er --arg archive "$archive" '.[] | .files[] | select(.filename == $archive) | .sha256' "$temporary/go-downloads.json")
+  curl -fsSL "https://go.dev/dl/${archive}" -o "$temporary/$archive"
+  printf '%s  %s\n' "$checksum" "$temporary/$archive" | sha256sum -c -
+  sudo mkdir -p "/opt/pyrra/go-${go_version}"
+  sudo tar -xzf "$temporary/$archive" --strip-components=1 -C "/opt/pyrra/go-${go_version}"
+  sudo ln -sfn "/opt/pyrra/go-${go_version}/bin/go" /usr/local/bin/go
+  sudo ln -sfn "/opt/pyrra/go-${go_version}/bin/gofmt" /usr/local/bin/gofmt
+fi
+
+echo "Preparing Node.js ${node_version}"
+if [[ "$(node --version 2>/dev/null || true)" != "v${node_version}" ]]; then
+  archive="node-v${node_version}-linux-${node_arch}.tar.gz"
+  curl -fsSL "https://nodejs.org/dist/v${node_version}/SHASUMS256.txt" -o "$temporary/node-checksums.txt"
+  checksum=$(awk -v archive="$archive" '$2 == archive {print $1}' "$temporary/node-checksums.txt")
+  curl -fsSL "https://nodejs.org/dist/v${node_version}/${archive}" -o "$temporary/$archive"
+  printf '%s  %s\n' "$checksum" "$temporary/$archive" | sha256sum -c -
+  sudo mkdir -p "/opt/pyrra/node-${node_version}"
+  sudo tar -xzf "$temporary/$archive" --strip-components=1 -C "/opt/pyrra/node-${node_version}"
+  for binary in node npm npx; do
+    sudo ln -sfn "/opt/pyrra/node-${node_version}/bin/$binary" "/usr/local/bin/$binary"
+  done
+fi
+
+echo "Preparing promtool ${prometheus_version}"
+if [[ "$(promtool --version 2>&1 || true)" != "promtool, version ${prometheus_version} "* ]]; then
+  archive="prometheus-${prometheus_version}.linux-${arch}.tar.gz"
+  release="https://github.com/prometheus/prometheus/releases/download/v${prometheus_version}"
+  curl -fsSL "$release/sha256sums.txt" -o "$temporary/prometheus-checksums.txt"
+  checksum=$(awk -v archive="$archive" '$2 == archive {print $1}' "$temporary/prometheus-checksums.txt")
+  curl -fsSL "$release/$archive" -o "$temporary/$archive"
+  printf '%s  %s\n' "$checksum" "$temporary/$archive" | sha256sum -c -
+  tar -xzf "$temporary/$archive" -C "$temporary" "prometheus-${prometheus_version}.linux-${arch}/promtool"
+  sudo install -m 0755 "$temporary/prometheus-${prometheus_version}.linux-${arch}/promtool" /usr/local/bin/promtool
+fi
+
+go version
+node --version
+promtool --version
+
+echo "Downloading Go dependencies"
+time go mod download
+
+echo "Installing locked UI dependencies"
+time npm --prefix ui ci --no-audit --no-fund
