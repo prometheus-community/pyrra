@@ -30,3 +30,6 @@ bin
 # node
 node_modules
 package*.json
+
+# Amp portal metadata is local to each orb.
+/.amp/portals/
