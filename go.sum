@@ -219,6 +219,8 @@ github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.94.1 h
 github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.94.1/go.mod h1:n4uH73YCwqQomLLIKEthHFwh4F9PneNaP6eaIIscpVg=
 github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.94.2 h1:kvsMN/cGkjmSkBozyWX1ETsiptueYUBTLlGfH72ruYY=
 github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.94.2/go.mod h1:n4uH73YCwqQomLLIKEthHFwh4F9PneNaP6eaIIscpVg=
+github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.95.0 h1:B7gXaIs1I1t8gV2eaoJrIiG7VUzSFTWtRIpUMaMQzf4=
+github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.95.0/go.mod h1:YugBhCP70UyV0rYTL5Rm56wjsMJFcyXzfMGRn3oFwA4=
 github.com/prometheus/client_golang v1.25.0 h1:cDtW1TcFsMi1RJc8khwCKB4VhzwV04aKqbYtNOXuiK0=
 github.com/prometheus/client_golang v1.25.0/go.mod h1:j2X/4/kaQHLPnmyEU8zjmkndo1T317VpCIQEml8LTKk=
 github.com/prometheus/client_golang/exp v0.0.0-20260907100614-57bb367da472 h1:4qeIiKMiaj1CH85S6mShB3nHtz1Ti1zg8lg3IQLsAhk=
@@ -328,6 +330,8 @@ k8s.io/api v0.37.2 h1:PnxqnUFy93jr2GcpWDkKOm8wfy25kT9wa572MuQS8oc=
 k8s.io/api v0.37.2/go.mod h1:+NVRLft99kx+Jg9v34GmHw867Dapim89TSyCsn2hK+M=
 k8s.io/apiextensions-apiserver v0.37.0 h1:zRMQ3+/LIE5oZ0tVvXwYHC+dIkSP5cjNWju7AZU1LOI=
 k8s.io/apiextensions-apiserver v0.37.0/go.mod h1:HU0PfSBwchHL5iDau6jjt9zU6ryWkDDlaVUiq91NK80=
+k8s.io/apiextensions-apiserver v0.37.2 h1:myaUiAlm1NRLYdpAvWYTqdgeiCepFupJiRFVVueMUYw=
+k8s.io/apiextensions-apiserver v0.37.2/go.mod h1:BFl1aPC89HsgFgYI+3xpFtckvkAeenDTZP84njA9yw4=
 k8s.io/apimachinery v0.37.1 h1:hGCYyvKHCwtwMitj2vU4vYx0Z16N9GyZk9BBnz0wDAE=
 k8s.io/apimachinery v0.37.1/go.mod h1:jF84AyUi/IRIXRot5f+lm6MpxoWI+F1XgjaMmwCdTFw=
 k8s.io/apimachinery v0.37.2 h1:G4t9RGoPDbQML38hz/kQQiltttgd3egg2ODCR8aIc2o=
@@ -342,6 +346,8 @@ k8s.io/kube-openapi v0.0.0-20260821135717-be32def86098 h1:z5+pcu1jTyKK5mNTe2/+x+
 k8s.io/kube-openapi v0.0.0-20260821135717-be32def86098/go.mod h1:0/mqHCVhlumdJ3BhCfnjSZQE037nAhNodh1/hK0T8/I=
 k8s.io/utils v0.0.0-20260707023825-cf1189d6abe3 h1:jVkFFVfXdXP74B/zbO3hM3hpSFD0xvhQ5U686DPurkE=
 k8s.io/utils v0.0.0-20260707023825-cf1189d6abe3/go.mod h1:M2s5JB1lIYP3jzZdorPLHXIPJzt9vv2muW5a6L9DtNM=
+k8s.io/utils v0.0.0-20261023123148-ca04ba58ecab h1:pjQrNLaF//ytZtWwCAHtW+pqwSKjtWDqzA8+TCX37RI=
+k8s.io/utils v0.0.0-20261023123148-ca04ba58ecab/go.mod h1:DdQ0BJxlQtuMlKDqdg7X5IMMQCXIk2b3d1/4M9OhUYo=
 sigs.k8s.io/controller-runtime v0.25.2 h1:bEkK3PVOIVK9X8QWLGVhJgmFc++47vfT6wakSzAOLsQ=
 sigs.k8s.io/controller-runtime v0.25.2/go.mod h1:4QqLdT6z/L6Olj8JJCtvztid4/fnIiYsfaTFScegctc=
 sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730 h1:IpInykpT6ceI+QxKBbEflcR5EXP7sU1kvOlxwZh5txg=
