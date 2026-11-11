@@ -664,6 +664,35 @@ func (o Objective) commonRuleAnnotations(externalURL string) map[string]string {
 	return annotations
 }
 
+func cloneStringMap(in map[string]string) map[string]string {
+	out := make(map[string]string, len(in)+1)
+	for k, v := range in {
+		out[k] = v
+	}
+	return out
+}
+
+// absentAlertLabels copies base and, when role is non-empty, adds an "absent" label
+// naming the role of the missing metric in the SLO (errors, total, or success).
+func absentAlertLabels(base map[string]string, role string) map[string]string {
+	labels := cloneStringMap(base)
+	if role != "" {
+		labels["absent"] = role
+	}
+	return labels
+}
+
+func (o Objective) absentAlertAnnotations(metricName string) map[string]string {
+	ann := cloneStringMap(o.commonRuleAnnotations(""))
+	if metricName != "" {
+		ann["metric"] = metricName
+	}
+	if len(ann) == 0 {
+		return nil
+	}
+	return ann
+}
+
 func (o Objective) countExpr() (parser.Expr, error) { // Returns a new instance of Expr with this query each time called
 	return parser.NewParser(parser.Options{}).ParseExpr(`sum by (grouping) (count_over_time(metric{matchers="total"}[1s]))`)
 }
@@ -881,12 +910,18 @@ func (o Objective) increaseRulesRatio(sloName string) (shortRules, longRules []m
 			matchers: o.Indicator.Ratio.Total.LabelMatchers,
 		}.replace(expr)
 
+		totalRole := ""
+		totalMetric := ""
+		if o.Indicator.Ratio.Total.Name != o.Indicator.Ratio.Errors.Name {
+			totalRole = "total"
+			totalMetric = o.Indicator.Ratio.Total.Name
+		}
 		absentRule := monitoringv1.Rule{
 			Alert:       o.AlertNameAbsent(),
 			Expr:        intstr.FromString(expr.String()),
 			For:         monitoringDuration(o.AbsentDuration().String()),
-			Labels:      alertLabels,
-			Annotations: o.commonRuleAnnotations(""),
+			Labels:      absentAlertLabels(alertLabels, totalRole),
+			Annotations: o.absentAlertAnnotations(totalMetric),
 		}
 		if o.PerformanceOverAccuracy {
 			shortRules = append(shortRules, absentRule)
@@ -966,8 +1001,8 @@ func (o Objective) increaseRulesRatio(sloName string) (shortRules, longRules []m
 				Alert:       o.AlertNameAbsent(),
 				Expr:        intstr.FromString(expr.String()),
 				For:         monitoringDuration(o.AbsentDuration().String()),
-				Labels:      alertLabels,
-				Annotations: o.commonRuleAnnotations(""),
+				Labels:      absentAlertLabels(alertLabels, "errors"),
+				Annotations: o.absentAlertAnnotations(o.Indicator.Ratio.Errors.Name),
 			}
 			if o.PerformanceOverAccuracy {
 				shortRules = append(shortRules, absentRule)
@@ -1162,8 +1197,8 @@ func (o Objective) increaseRuleLatency(sloName string, opts GenerationOptions) (
 			Alert:       o.AlertNameAbsent(),
 			Expr:        intstr.FromString(expr.String()),
 			For:         monitoringDuration(o.AbsentDuration().String()),
-			Labels:      alertLabels,
-			Annotations: o.commonRuleAnnotations(""),
+			Labels:      absentAlertLabels(alertLabels, "total"),
+			Annotations: o.absentAlertAnnotations(o.Indicator.Latency.Total.Name),
 		}
 
 		expr, err = o.absentExpr()
@@ -1186,8 +1221,8 @@ func (o Objective) increaseRuleLatency(sloName string, opts GenerationOptions) (
 			Alert:       o.AlertNameAbsent(),
 			Expr:        intstr.FromString(expr.String()),
 			For:         monitoringDuration(o.AbsentDuration().String()),
-			Labels:      alertLabelsLe,
-			Annotations: o.commonRuleAnnotations(""),
+			Labels:      absentAlertLabels(alertLabelsLe, "success"),
+			Annotations: o.absentAlertAnnotations(o.Indicator.Latency.Success.Name),
 		}
 
 		if o.PerformanceOverAccuracy {
