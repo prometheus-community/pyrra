@@ -6,6 +6,7 @@ import (
 	"time"
 
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
+	"github.com/prometheus/prometheus/model/labels"
 	"github.com/stretchr/testify/require"
 	"k8s.io/apimachinery/pkg/util/intstr"
 )
@@ -2462,4 +2463,65 @@ func TestObjective_PyrraURLAnnotation(t *testing.T) {
 			}
 		})
 	}
+}
+
+func objectiveHTTPLatencyBucketTotal() Objective {
+	o := objectiveHTTPLatency()
+	o.Indicator.Latency.Total = Metric{
+		Name: "http_request_duration_seconds_bucket",
+		LabelMatchers: []*labels.Matcher{
+			{Type: labels.MatchEqual, Name: "job", Value: "metrics-service-thanos-receive-default"},
+			{Type: labels.MatchEqual, Name: "le", Value: "+Inf"},
+			{Type: labels.MatchEqual, Name: "__name__", Value: "http_request_duration_seconds_bucket"},
+		},
+	}
+	o.Indicator.Latency.Success.LabelMatchers = []*labels.Matcher{
+		{Type: labels.MatchEqual, Name: "job", Value: "metrics-service-thanos-receive-default"},
+		{Type: labels.MatchEqual, Name: "le", Value: "1"},
+		{Type: labels.MatchEqual, Name: "__name__", Value: "http_request_duration_seconds_bucket"},
+	}
+	return o
+}
+
+func TestObjective_LatencyBucketInfTotal(t *testing.T) {
+	t.Run("increase", func(t *testing.T) {
+		group, err := objectiveHTTPLatencyBucketTotal().IncreaseRules(GenerationOptions{})
+		require.NoError(t, err)
+		require.Equal(t, []monitoringv1.Rule{{
+			Record: "http_request_duration_seconds:increase4w",
+			Expr:   intstr.FromString(`sum(increase(http_request_duration_seconds_bucket{job="metrics-service-thanos-receive-default",le="+Inf"}[4w]))`),
+			Labels: map[string]string{"job": "metrics-service-thanos-receive-default", "le": "+Inf", "slo": "monitoring-http-latency"},
+		}, {
+			Record: "http_request_duration_seconds:increase4w",
+			Expr:   intstr.FromString(`sum(increase(http_request_duration_seconds_bucket{job="metrics-service-thanos-receive-default",le="1"}[4w]))`),
+			Labels: map[string]string{"job": "metrics-service-thanos-receive-default", "le": "1", "slo": "monitoring-http-latency"},
+		}}, group.Rules[:2])
+	})
+
+	t.Run("split", func(t *testing.T) {
+		o := objectiveHTTPLatencyBucketTotal()
+		o.PerformanceOverAccuracy = true
+		_, long, err := o.SplitIncreaseRules(GenerationOptions{})
+		require.NoError(t, err)
+		require.Equal(t, `sum(sum_over_time(http_request_duration_seconds:increase5m{job="metrics-service-thanos-receive-default",le="+Inf"}[4w:5m]))`, long.Rules[0].Expr.String())
+	})
+
+	t.Run("generic", func(t *testing.T) {
+		group, err := objectiveHTTPLatencyBucketTotal().GenericRules(GenerationOptions{})
+		require.NoError(t, err)
+		var availability string
+		for _, r := range group.Rules {
+			if r.Record == "pyrra_availability" {
+				availability = r.Expr.String()
+			}
+		}
+		require.Equal(t, `sum(http_request_duration_seconds:increase4w{job="metrics-service-thanos-receive-default",le="1",slo="monitoring-http-latency"} or vector(0)) / sum(http_request_duration_seconds:increase4w{job="metrics-service-thanos-receive-default",le="+Inf",slo="monitoring-http-latency"})`, availability)
+	})
+
+	t.Run("queries", func(t *testing.T) {
+		o := objectiveHTTPLatencyBucketTotal()
+		require.Equal(t, `sum(http_request_duration_seconds:increase4w{job="metrics-service-thanos-receive-default",le="+Inf",slo="monitoring-http-latency"})`, o.QueryTotal(o.Window, GenerationOptions{}))
+		require.NotContains(t, o.QueryErrorBudget(GenerationOptions{}), `le=""`)
+		require.NotContains(t, o.QueryErrors(o.Window, GenerationOptions{}), `le=""`)
+	})
 }
