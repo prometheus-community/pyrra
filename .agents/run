@@ -1,0 +1,186 @@
+#!/usr/bin/env bash
+# Runs Pyrra locally for development. Keep it working with macOS' bash 3.2.
+set -euo pipefail
+
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
+
+usage() {
+  cat <<'EOF'
+Usage: .agents/run <mode>
+
+Every mode serves the UI from the Vite dev server on http://localhost:3000, so
+UI changes reload without a rebuild. The modes differ in what runs behind it:
+
+  ui     Nothing. The UI talks to demo.pyrra.dev's API.
+  api    `pyrra api` on :9099 against a backend and a Prometheus that already
+         run, e.g. port-forwarded from a cluster. Set PYRRA_BACKEND_URL
+         (default http://localhost:9444) and PROMETHEUS_URL
+         (default http://localhost:9090).
+  demo   `pyrra api` and `pyrra filesystem` on :9444 serving examples/*.yaml,
+         querying demo.pyrra.dev's Prometheus, which already records the rules
+         for those SLOs.
+  local  `pyrra api`, `pyrra filesystem` and a Prometheus on :9090 that scrapes
+         Pyrra and itself and evaluates the generated rules. Only the examples
+         whose metrics come from Pyrra or Prometheus are loaded, and their
+         burn rates need a few minutes of data before they show up.
+
+Runs in the foreground until interrupted or until one process exits, then
+stops all of them. Output lines are prefixed with the process name. State
+(the pyrra binary, generated rules, Prometheus and its data) lives in tmp/.
+EOF
+}
+
+mode=${1:-}
+case "$mode" in
+  ui | api | demo | local) ;;
+  -h | --help | help) usage; exit 0 ;;
+  *) usage >&2; exit 2 ;;
+esac
+
+mkdir -p tmp
+pids=()
+
+cleanup() {
+  trap - EXIT
+  for pid in ${pids[@]+"${pids[@]}"}; do
+    kill -TERM -- "-$pid" 2>/dev/null || true
+  done
+  wait 2>/dev/null || true
+}
+trap cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+
+# start runs a command in the background with its output prefixed by name.
+# Job control gives it its own process group: bash forks a subshell around
+# it, so only killing the group reaches the process and whatever it spawned.
+# Job control stays off otherwise, or the sleep below would get its own group
+# too and take Ctrl+C away from this script.
+start() {
+  local name=$1
+  shift
+  set -m
+  "$@" > >(awk -v prefix="[$name] " '{ print prefix $0; fflush() }') 2>&1 &
+  pids+=("$!")
+  set +m
+}
+
+ui_dependencies() {
+  [[ -d ui/node_modules ]] || npm --prefix ui ci --no-audit --no-fund
+}
+
+build_pyrra() {
+  ui_dependencies
+  # main.go embeds ui/build, so the binary doesn't compile without it. The
+  # embedded UI on :9099 may be stale; use the dev server on :3000.
+  [[ -f ui/build/index.html ]] || npm --prefix ui run build
+  echo "Building pyrra"
+  go build -o tmp/pyrra .
+}
+
+start_ui() {
+  start ui env PYRRA_API_URL="$1" PROMETHEUS_EXTERNAL_URL="$2" \
+    bash -c 'cd ui && exec node_modules/.bin/vite'
+}
+
+start_filesystem() {
+  # Rules left over from the other filesystem mode would be loaded too.
+  rm -rf tmp/rules
+  mkdir -p tmp/rules
+  start filesystem tmp/pyrra filesystem \
+    --config-files="$1" \
+    --prometheus-folder=tmp/rules \
+    --prometheus-url=http://localhost:9090
+}
+
+prometheus_binary() {
+  # One pin for the version, shared with the promtool that .agents/setup installs.
+  local version os arch name release checksum
+  version=$(sed -n 's/^prometheus_version=//p' .agents/setup)
+  os=$(uname -s | tr '[:upper:]' '[:lower:]')
+  case "$(uname -m)" in
+    x86_64 | amd64) arch=amd64 ;;
+    aarch64 | arm64) arch=arm64 ;;
+    *) echo "Unsupported architecture: $(uname -m)" >&2; exit 1 ;;
+  esac
+  name="prometheus-${version}.${os}-${arch}"
+  if [[ ! -x "tmp/$name/prometheus" ]]; then
+    echo "Downloading Prometheus ${version}" >&2
+    release="https://github.com/prometheus/prometheus/releases/download/v${version}"
+    curl -fsSL "$release/sha256sums.txt" -o tmp/prometheus-checksums.txt
+    curl -fsSL "$release/$name.tar.gz" -o "tmp/$name.tar.gz"
+    checksum=$(awk -v archive="$name.tar.gz" '$2 == archive {print $1}' tmp/prometheus-checksums.txt)
+    printf '%s  %s\n' "$checksum" "tmp/$name.tar.gz" | shasum -a 256 -c - >&2
+    tar -xzf "tmp/$name.tar.gz" -C tmp
+    rm "tmp/$name.tar.gz" tmp/prometheus-checksums.txt
+  fi
+  echo "tmp/$name/prometheus"
+}
+
+case "$mode" in
+  ui)
+    ui_dependencies
+    start_ui https://demo.pyrra.dev https://demo.pyrra.dev/prometheus
+    ;;
+  api)
+    build_pyrra
+    prometheus_url=${PROMETHEUS_URL:-http://localhost:9090}
+    start api tmp/pyrra api \
+      --prometheus-url="$prometheus_url" \
+      --api-url="${PYRRA_BACKEND_URL:-http://localhost:9444}"
+    start_ui http://localhost:9099 "$prometheus_url"
+    ;;
+  demo)
+    build_pyrra
+    # The filesystem backend's reload goes to localhost:9090, not the demo:
+    # the demo's Prometheus doesn't read the rules written here.
+    start_filesystem 'examples/*.yaml'
+    start api tmp/pyrra api --prometheus-url=https://demo.pyrra.dev/prometheus
+    start_ui http://localhost:9099 https://demo.pyrra.dev/prometheus
+    ;;
+  local)
+    build_pyrra
+    prometheus=$(prometheus_binary)
+    # --config-files takes a single glob, so link the examples that have data
+    # here into one directory.
+    rm -rf tmp/slos
+    mkdir -p tmp/slos
+    for slo in prometheus-http pyrra-connect-errors pyrra-connect-latency pyrra-filesystem-errors; do
+      ln -s "../../examples/$slo.yaml" "tmp/slos/$slo.yaml"
+    done
+    cat > tmp/prometheus.yml <<'EOF'
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+rule_files:
+  - rules/*.yaml
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets: [localhost:9090]
+  # The examples select Pyrra's metrics with job="pyrra".
+  - job_name: pyrra
+    static_configs:
+      - targets: [localhost:9099, localhost:9444]
+EOF
+    start prometheus "$prometheus" \
+      --config.file=tmp/prometheus.yml \
+      --storage.tsdb.path=tmp/prometheus-data \
+      --web.enable-lifecycle
+    start_filesystem 'tmp/slos/*.yaml'
+    start api tmp/pyrra api --prometheus-url=http://localhost:9090
+    start_ui http://localhost:9099 http://localhost:9090
+    ;;
+esac
+
+# Stop everything once any process exits, so a crashed API doesn't leave a UI
+# behind that only shows errors.
+while :; do
+  for pid in "${pids[@]}"; do
+    if ! kill -0 "$pid" 2>/dev/null; then
+      wait "$pid" || exit $?
+      exit 0
+    fi
+  done
+  sleep 1
+done

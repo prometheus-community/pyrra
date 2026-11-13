@@ -33,52 +33,15 @@ and build the project.
 
 ## Running locally
 
-Build the UI and compile the Go binaries
+`.agents/run <mode>` starts Pyrra for development, for people and coding agents alike.
+Every mode serves the UI from the Vite dev server on [localhost:3000](http://localhost:3000), so UI changes reload without a rebuild.
 
-```bash
-make all
-```
+| Mode    | Runs                                                 | Queries                                                                                         |
+|---------|------------------------------------------------------|-------------------------------------------------------------------------------------------------|
+| `ui`    | UI                                                   | demo.pyrra.dev's API                                                                            |
+| `api`   | UI, API                                              | a backend at `PYRRA_BACKEND_URL` and a Prometheus at `PROMETHEUS_URL`, e.g. port-forwarded ones |
+| `demo`  | UI, API, filesystem backend with `examples/*.yaml`   | demo.pyrra.dev's Prometheus                                                                     |
+| `local` | UI, API, filesystem backend, Prometheus              | only the processes it starts                                                                    |
 
-### Run the API and UI
-
-Run the API binary in one terminal
-
-```bash
-./pyrra api
-```
-
-*Note: the API assumes a Prometheus is running on [localhost:9090](http://localhost:9090) and a backend on [localhost:9444](http://localhost:9444)) by default. Check  `./pyrra api --help` flag for the parameters to change those.*
-
-### Run a Kubernetes or filesystem backend
-
-Run the filesystem binary in another terminal
-
-```bash
-./pyrra filesystem
-```
-
-Or run the Kubernetes binary in the other terminal
-
-```bash
-./pyrra kubernetes
-```
-
-*Note: This binary tries to run against your default Kubernetes context. Use the `-kubeconfig` flag to change for another kubeconfig*
-
-### Running the UI standalone
-
-Run the Node server to work on the UI itself
-
-```bash
-cd ui
-npm run start
-```
-
-*Note: This still needs the API and one of the backends to really work.*
-
-Most likely you need to update the `window.PUBLIC_API` constant in `ui/public/index.html`.
-
-```diff
--    <script>window.PUBLIC_API = '/'</script>
-+    <script>window.PUBLIC_API = 'http://localhost:9099/'</script>
-```
+`.agents/run --help` has the details.
+To run the components by hand instead, build with `make all` and see `./pyrra api --help`, `./pyrra filesystem --help` and `./pyrra kubernetes --help`.
