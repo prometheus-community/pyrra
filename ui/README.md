@@ -12,6 +12,7 @@ Runs the app in development mode with the Vite dev server.\
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 API requests are proxied to [demo.pyrra.dev](https://demo.pyrra.dev) (see `vite.config.ts`).
+Set `PYRRA_API_URL` to proxy to another API, like a local `pyrra api` on http://localhost:9099; `.agents/run` from the repository root does that for you.
 The page reloads when you make edits.
 
 ### `npm test`
