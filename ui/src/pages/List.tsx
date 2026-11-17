@@ -789,7 +789,7 @@ const List = () => {
                     void navigate(objectivePage(labels.lset, labels.grouping))
                   }}>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className={cn(cell.column.id === 'lset' && 'whitespace-normal')}>
                       <>
                         {cell.column.id === 'lset' ? (
                           <NameCell
