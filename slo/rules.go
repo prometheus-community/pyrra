@@ -1038,10 +1038,11 @@ func (o Objective) increaseRuleLatency(sloName string, opts GenerationOptions) (
 			break
 		}
 	}
-	ruleLabelsLe := map[string]string{"le": le}
+	ruleLabelsLe := make(map[string]string, len(ruleLabels)+1)
 	for k, v := range ruleLabels {
 		ruleLabelsLe[k] = v
 	}
+	ruleLabelsLe["le"] = le
 
 	window := time.Duration(o.Window)
 	if o.PerformanceOverAccuracy {
@@ -1103,7 +1104,7 @@ func (o Objective) increaseRuleLatency(sloName string, opts GenerationOptions) (
 		// the count series; without it the sum also picks up the success bucket
 		// and doubles the denominator.
 		totalSubqueryMatchers := o.buildSubqueryMatchers(applyPrometheus3Migration(o.Indicator.Latency.Total.LabelMatchers, opts), subqueryName)
-		totalSubqueryMatchers = append(totalSubqueryMatchers, &labels.Matcher{Type: labels.MatchEqual, Name: "le", Value: ""})
+		totalSubqueryMatchers = appendEmptyLeMatcher(totalSubqueryMatchers)
 		objectiveReplacer{
 			metric:   subqueryName,
 			matchers: totalSubqueryMatchers,
@@ -1633,7 +1634,7 @@ func (o Objective) GenericRules(opts GenerationOptions) (monitoringv1.RuleGroup,
 					break
 				}
 			}
-			matchers = append(matchers, &labels.Matcher{Type: labels.MatchEqual, Name: "le", Value: ""})
+			matchers = appendEmptyLeMatcher(matchers)
 			matchers = append(matchers, &labels.Matcher{
 				Type:  labels.MatchEqual,
 				Name:  "slo",
