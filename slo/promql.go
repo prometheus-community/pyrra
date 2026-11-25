@@ -32,10 +32,7 @@ func (o Objective) QueryTotal(window model.Duration, opts GenerationOptions) str
 	case Latency:
 		metric = increaseName(o.Indicator.Latency.Total.Name, window)
 		grouping = slices.Clone(o.Indicator.Latency.Grouping)
-		matchers = append(
-			applyPrometheus3Migration(cloneMatchers(o.Indicator.Latency.Total.LabelMatchers), opts),
-			&labels.Matcher{Type: labels.MatchEqual, Name: labels.BucketLabel, Value: ""},
-		)
+		matchers = appendEmptyLeMatcher(applyPrometheus3Migration(cloneMatchers(o.Indicator.Latency.Total.LabelMatchers), opts))
 	case LatencyNative:
 		metric = increaseName(o.Indicator.LatencyNative.Total.Name, window)
 		grouping = slices.Clone(o.Indicator.LatencyNative.Grouping)
@@ -118,7 +115,7 @@ func (o Objective) QueryErrors(window model.Duration, opts GenerationOptions) st
 			}
 		}
 		// Add the matcher {le=""} to select the recording rule that summed up all requests
-		matchers = append(matchers, &labels.Matcher{Type: labels.MatchEqual, Name: labels.BucketLabel, Value: ""})
+		matchers = appendEmptyLeMatcher(matchers)
 		matchers = append(matchers, &labels.Matcher{
 			Type:  labels.MatchEqual,
 			Name:  "slo",
@@ -349,7 +346,7 @@ func (o Objective) QueryErrorBudget(opts GenerationOptions) string {
 		}
 
 		// Add the matcher {le=""} to select the recording rule that summed up all requests
-		matchers = append(matchers, &labels.Matcher{Type: labels.MatchEqual, Name: labels.BucketLabel, Value: ""})
+		matchers = appendEmptyLeMatcher(matchers)
 		matchers = append(matchers, &labels.Matcher{Type: labels.MatchEqual, Name: "slo", Value: o.Name()})
 
 		errorMatchers = append(errorMatchers, &labels.Matcher{Type: labels.MatchEqual, Name: "slo", Value: o.Name()})
@@ -1112,6 +1109,20 @@ func groupingLabels(errorMatchers, totalMatchers []*labels.Matcher) []string {
 	delete(groupingLabels, labels.BucketLabel)
 
 	return slices.Collect(maps.Keys(groupingLabels))
+}
+
+// appendEmptyLeMatcher adds {le=""} so that a latency total selects the
+// recording rule of the _count series rather than the success bucket, both of
+// which are recorded under the same name. If the total already matches on le,
+// for example _bucket{le="+Inf"}, its recording rule carries that le label and
+// adding le="" would make the selector match nothing.
+func appendEmptyLeMatcher(matchers []*labels.Matcher) []*labels.Matcher {
+	for _, m := range matchers {
+		if m.Name == labels.BucketLabel {
+			return matchers
+		}
+	}
+	return append(matchers, &labels.Matcher{Type: labels.MatchEqual, Name: labels.BucketLabel, Value: ""})
 }
 
 func cloneMatchers(matchers []*labels.Matcher) []*labels.Matcher {
